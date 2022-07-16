@@ -67,14 +67,18 @@ static void rlImGuiNewFrame()
 
     io.DisplaySize.x = float(GetScreenWidth());
     io.DisplaySize.y = float(GetScreenHeight());
-    int width = io.DisplaySize.x, height = io.DisplaySize.y;
+    int width = int(io.DisplaySize.x);
+    int height = int(io.DisplaySize.y);
+
 #ifdef PLATFORM_DESKTOP
     glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
 #endif
-    if (width > 0 && height > 0) {
+    if (width > 0 && height > 0)
+    {
         io.DisplayFramebufferScale = ImVec2((float)width / io.DisplaySize.x, (float)height / io.DisplaySize.y);
     }
-    else {
+    else
+    {
         io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
     }
 
@@ -301,7 +305,7 @@ static void EnableScissor(float x, float y, float width, float height)
 {
     rlEnableScissorTest();
     ImGuiIO& io = ImGui::GetIO();
-    rlScissor((int)x * io.DisplayFramebufferScale.x, (GetScreenHeight() - (int)(y + height)) * io.DisplayFramebufferScale.y, (int)width * io.DisplayFramebufferScale.x, (int)height * io.DisplayFramebufferScale.y);
+    rlScissor(int(x * io.DisplayFramebufferScale.x), int(GetScreenHeight() - (y + height) * io.DisplayFramebufferScale.y), int(width * io.DisplayFramebufferScale.x), int(height * io.DisplayFramebufferScale.y));
 }
 
 static void rlRenderData(ImDrawData* data)
