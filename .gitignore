@@ -351,3 +351,4 @@ MigrationBackup/
 /raylib-master
 /_build
 /*.sln
+/imgui.ini
