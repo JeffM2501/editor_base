@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imgui.h"
+#include "raylib.h"
 
 #include <vector>
 
@@ -31,6 +32,9 @@ namespace EditorManager
 
     void AddDocument(EditorDocument* document);
 
+    EditorDocument* GetActiveDocument();
+    void SetActiveDocument(EditorDocument* document);
+
     void AddPanel(EditorPanel* panel);
 
     template <class T>
@@ -47,4 +51,6 @@ namespace EditorManager
 
     std::vector<EditorWindow*> GetWindowsOfType(size_t typeId);
     size_t GetWindowTypeIndex(EditorWindow* window);
+
+    Vector2 GetWindowMousePostion();
 }

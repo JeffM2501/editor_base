@@ -36,7 +36,12 @@ public:
     const char* GetWindowTitle() override;
     inline const char* GetWindowUID() override { return "EditorPanel"; }
 
+    inline bool IsOpen() const { return Opened; }
+    inline void SetOpen( bool open ) { Opened = open; }
+
 protected:
     inline virtual void OnUpdate() {}
     inline virtual void OnShow() {}
+
+    bool Opened = true;
 };

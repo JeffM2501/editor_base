@@ -25,6 +25,11 @@ void EditorDocument::Show()
 {
     // main window tab
     bool open = true;
+    Hovered = false;
+
+    if (ForceNextFocus)
+        ImGui::SetNextWindowFocus();
+    ForceNextFocus = false;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     bool draw = ImGui::Begin(GetWindowId(), &open, 0);
@@ -36,6 +41,7 @@ void EditorDocument::Show()
     if (draw)
     {
         Focused = ImGui::IsWindowFocused();
+        Hovered = ImGui::IsWindowHovered();
             
         OnShow();
     }
@@ -48,7 +54,7 @@ void EditorDocument::Show()
 
 void EditorDocument::Update()
 {
-
+    OnUpdate();
 }
 
 void EditorDocument::Close()
@@ -62,7 +68,7 @@ bool EditorDocument::WantClose()
 }
 
 
-bool EditorDocument::IsFocused()
+bool EditorDocument::IsFocused() const
 {
     return Focused;
 }

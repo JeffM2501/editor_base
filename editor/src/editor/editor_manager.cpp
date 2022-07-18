@@ -46,6 +46,8 @@ namespace EditorManager
 
     std::map<DockingNodes, ImGuiID> DockspaceNodes;
 
+    float MenuBarOffset = 0;
+
     void Setup()
     {
         rlImGuiSetup(true);
@@ -153,14 +155,44 @@ namespace EditorManager
 
     void Update()
     {
+        for (auto panel : Panels)
+        {
+            panel->Update(FocusedDocument);
+        }
+
+        // draw registered windows
+        for (std::vector<EditorDocument*>::iterator docItr = Documents.begin(); docItr != Documents.end();)
+        {
+            EditorDocument* document = *docItr;
+            document->Update();
+            if (document->WantClose())
+            {
+                document->Close();
+                delete(document);
+                docItr = Documents.erase(docItr);
+            }
+            else
+            {
+                docItr++;
+            }
+        }
     }
 
-    void AddDocument(EditorDocument* document)
+    void AddDocument(EditorDocument* newDocument)
     {
-        Documents.push_back(document);
-        document->Create();
+        for (auto existingDoc : Documents)
+        {
+            if (existingDoc->GetWindowUID() == newDocument->GetWindowUID())
+            {
+                SetActiveDocument(existingDoc);
+                return;
+            }
+        }
 
-        FocusedDocument = document;
+        Documents.push_back(newDocument);
+        newDocument->Create();
+
+        SetActiveDocument(newDocument);
     }
 
     void AddPanel(EditorPanel* panel)
@@ -169,9 +201,23 @@ namespace EditorManager
         panel->Create();
     }
 
+    EditorDocument* GetActiveDocument()
+    {
+        return FocusedDocument;
+    }
+    
+    void SetActiveDocument(EditorDocument* document)
+    {
+        if (FocusedDocument != document)
+        {
+            FocusedDocument = document;
+            document->ForceFocus();
+        }
+    }
+
     void SetupUI()
     {
-       
+
     }
 
     void Quit()
@@ -199,18 +245,39 @@ namespace EditorManager
                 ImGui::EndMenu();
             }
 
+            if (ImGui::BeginMenu("Window"))
+            {
+                for (auto& panel : Panels)
+                {
+                    bool open = panel->IsOpen();
+                    if (ImGui::MenuItem(panel->GetWindowTitle(), nullptr, &open))
+                    {
+                        panel->SetOpen(open);
+                    }
+                }
+                ImGui::EndMenu();
+            }
+
             ImGui::EndMenuBar();
         }
+    }
+
+    Vector2 GetWindowMousePostion()
+    {
+        Vector2 pos = GetMousePosition();
+        pos.y -= MenuBarOffset;
+        return pos;
     }
 
     void Render()
     {
         rlImGuiBegin();
+        MenuBarOffset = ImGui::GetTextLineHeightWithSpacing() + ImGui::GetStyle().FramePadding.y;
 
         ImVec2 screenSize((float)GetScreenWidth(), (float)GetScreenHeight());
 
         ImGui::SetNextWindowSize(screenSize, ImGuiCond_Always);
-        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+        ImGui::SetNextWindowPos(ImVec2(0,0), ImGuiCond_Always);
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
@@ -230,6 +297,8 @@ namespace EditorManager
 
         if (showMainFrame)
         {
+            screenSize.y -= MenuBarOffset;
+
             DockspaceId = ImGui::DockSpace(ImGui::GetID("MainWindowDock"), screenSize, ImGuiDockNodeFlags_PassthruCentralNode);
 
             auto* node = ImGui::DockBuilderGetNode(DockspaceId);
@@ -274,5 +343,10 @@ namespace EditorManager
     bool WantMouse()
     {
         return ImGui::GetIO().WantCaptureMouse;
+    }
+
+    float GetMenubarOffset()
+    {
+        return MenuBarOffset;
     }
 }

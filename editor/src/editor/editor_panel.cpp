@@ -11,15 +11,21 @@ void EditorPanel::Update(EditorDocument* document)
 
 void EditorPanel::Show(EditorDocument* document)
 {
-    bool closed = false;
+    if (!IsOpen())
+        return;
+
+    bool open = true;
     const char* idStr = GetWindowId();
-    bool draw = ImGui::Begin(idStr, &closed, ImGuiWindowFlags_NoFocusOnAppearing);
+    bool draw = ImGui::Begin(idStr, &open, ImGuiWindowFlags_NoFocusOnAppearing);
 
     if (draw)
     {
         OnShow();
     }
     ImGui::End();
+
+    if (!open)
+        Opened = false;
 }
 
 const char* EditorPanel::GetWindowTitle()

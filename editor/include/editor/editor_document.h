@@ -74,7 +74,12 @@ public:
         return GetPanelData<T>(panel->GetTypeId());
     }
 
-    bool IsFocused();
+    bool IsFocused() const;
+    inline void ForceFocus() { ForceNextFocus = true; }
+
+    inline bool IsHovered() const { return Hovered; }
+
+    inline bool IsMouseDownIn(MouseButton button) const{ return IsHovered() && IsMouseButtonDown(button); }
 
 protected:
     virtual void OnCreate() {};
@@ -85,7 +90,10 @@ protected:
 protected:
     bool Closing = false;
     bool Focused = false;
+    bool ForceNextFocus = false;
     ImGuiID DockspaceId = 0;
+
+    bool Hovered = false;
 
     std::map<size_t, EditorDocumentPanelData*> PanelData;
 };

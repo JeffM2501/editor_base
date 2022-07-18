@@ -15,7 +15,14 @@ protected:
     void OnShow() override;
 
     virtual void RenderContent() {};
+    virtual void OnResized() {};
+
+    Vector2 GetContentSize() const;
+    Vector2 GetLocalMousePosition() const;
 
 protected:
     RenderTexture ContentTexture = { 0 };
+    Color ClearColor = SKYBLUE;
+
+    Vector2 LocalMousePosition = { 0 };
 };
