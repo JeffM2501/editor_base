@@ -10,7 +10,13 @@ public:
     DECLARE_DOCUMENT(View3dDocument, ContentDocument)
 
 protected:
-     void RenderContent() override;
+
+    void OnCreate() override;
+    void OnUpdate() override;
+    void RenderContent() override;
+    virtual void RenderScene();
+
+    void OnResized() override;
 
 protected:
     rlFPCamera Camera;

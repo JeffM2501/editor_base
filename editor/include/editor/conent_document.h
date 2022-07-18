@@ -14,8 +14,9 @@ public:
 protected:
     void OnShow() override;
 
-    virtual void RenderContent() {};
-    virtual void OnResized() {};
+    virtual void RenderContent() {}
+    virtual void ShowOverlay() {}
+    virtual void OnResized() {}
 
     Vector2 GetContentSize() const;
     Vector2 GetLocalMousePosition() const;
@@ -25,4 +26,6 @@ protected:
     Color ClearColor = SKYBLUE;
 
     Vector2 LocalMousePosition = { 0 };
+
+    Rectangle ContentRect = { 0, 0, 0, 0 };
 };

@@ -19,7 +19,6 @@ void ContentDocument::OnShow()
     LocalMousePosition = EditorManager::GetWindowMousePostion();
     LocalMousePosition.x -= ImGui::GetWindowPos().x;
     LocalMousePosition.y -= ImGui::GetWindowPos().y;
-    LocalMousePosition.y = GetContentSize().y - LocalMousePosition.y;
 
     if (ContentTexture.id == 0 || (size.x != ContentTexture.texture.width || size.y != ContentTexture.texture.height))
     {
@@ -27,6 +26,7 @@ void ContentDocument::OnShow()
             UnloadRenderTexture(ContentTexture);
 
         ContentTexture = LoadRenderTexture(int(size.x), int(size.y));
+        ContentRect = { 0,0,size.x, -size.y };
         OnResized();
     }
 
@@ -35,7 +35,9 @@ void ContentDocument::OnShow()
     RenderContent();
     EndTextureMode();
 
-    rlImGuiImageSize(&ContentTexture.texture, ContentTexture.texture.width, ContentTexture.texture.height);
+    rlImGuiImageRect(&ContentTexture.texture, ContentTexture.texture.width, ContentTexture.texture.height, ContentRect);
+
+    ShowOverlay();
 }
 
 Vector2 ContentDocument::GetContentSize() const

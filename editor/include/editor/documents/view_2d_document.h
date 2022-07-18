@@ -10,6 +10,7 @@ public:
 
 protected:
     void RenderContent() override;
+    virtual void RenderScene();
 
     void OnCreate() override;
     void OnUpdate() override;
@@ -19,6 +20,8 @@ protected:
     Vector2 GetWorldMousePos() const;
 
     inline Camera2D& GetCamera() { return Camera; }
+
+
 
 protected:
     Camera2D Camera = { 0 };
