@@ -1,9 +1,14 @@
 #pragma once
 
+#include "editor/event_callbacks.h"
+
 #include "imgui.h"
 #include "raylib.h"
+//#include "editor/event_callbacks.h"
 
 #include <vector>
+#include <memory>
+#include <functional>
 
 class EditorPanel;
 class EditorDocument;
@@ -53,4 +58,8 @@ namespace EditorManager
     size_t GetWindowTypeIndex(EditorWindow* window);
 
     Vector2 GetWindowMousePostion();
+
+    using DocumentCallback = std::function<void(EditorDocument*)>;
+
+    extern EventHandler<DocumentCallback> OnDocumentChanged;
 }

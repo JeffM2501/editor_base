@@ -8,6 +8,9 @@ class View2dDocument : public ContentDocument
 public:
     DECLARE_DOCUMENT(View2dDocument, ContentDocument)
 
+    inline Camera2D& GetCamera() { return ViewCamera; }
+    Vector2 GetWorldMousePos() const;
+
 protected:
     void RenderContent() override;
     virtual void RenderScene();
@@ -17,12 +20,6 @@ protected:
 
     void OnResized() override;
 
-    Vector2 GetWorldMousePos() const;
-
-    inline Camera2D& GetCamera() { return Camera; }
-
-
-
 protected:
-    Camera2D Camera = { 0 };
+    Camera2D ViewCamera = { 0 };
 };

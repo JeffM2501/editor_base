@@ -92,7 +92,7 @@ public:
     typedef std::function<bool(rlFPCamera& camera, Vector3& newPosition, const Vector3& oldPosition)> PositionCallback;
     PositionCallback ValidateCamPosition = nullptr;
 
-    inline const Camera& GetCamera() const { return ViewCamera; }
+    inline Camera& GetCamera() { return ViewCamera; }
 
     // start drawing using the camera, with near/far plane support
     void BeginMode3D();

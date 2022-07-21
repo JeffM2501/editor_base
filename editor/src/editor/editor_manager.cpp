@@ -32,6 +32,8 @@ const char* EditorWindow::GetWindowUIDSuffix()
 
 namespace EditorManager
 {
+    EventHandler<DocumentCallback> OnDocumentChanged;
+
     ImGuiID DockspaceId = 0;
     bool RequestQuit = false;
     bool ContentHovered = false;
@@ -55,6 +57,8 @@ namespace EditorManager
         ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
 
         ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_Right;
+
+        EditorMenuManager::Setup();
     }
 
     std::vector<EditorWindow*> GetWindowsOfType(size_t typeId)
@@ -168,8 +172,15 @@ namespace EditorManager
             if (document->WantClose())
             {
                 document->Close();
-                delete(document);
                 docItr = Documents.erase(docItr);
+                if (FocusedDocument == document)
+                {
+                    if (Documents.empty())
+                        FocusedDocument = nullptr;
+                    else
+                        SetActiveDocument(Documents.front());
+                }
+                delete(document);
             }
             else
             {
@@ -208,10 +219,12 @@ namespace EditorManager
     
     void SetActiveDocument(EditorDocument* document)
     {
-        if (FocusedDocument != document)
+        if (FocusedDocument == nullptr || FocusedDocument->GetWindowUID() != document->GetWindowId())
         {
             FocusedDocument = document;
-            document->ForceFocus();
+            if (!document->IsFocused())
+                document->ForceFocus();
+            OnDocumentChanged.Call(document);
         }
     }
 
@@ -228,38 +241,6 @@ namespace EditorManager
     bool WantQuit()
     {
         return RequestQuit || WindowShouldClose();
-    }
-
-    void ShowMenu()
-    {
-        bool openAbout = false;
-        bool copyScreenshot = false;
-
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("Exit", "Alt+F4"))
-                    Quit();
-
-                ImGui::EndMenu();
-            }
-
-            if (ImGui::BeginMenu("Window"))
-            {
-                for (auto& panel : Panels)
-                {
-                    bool open = panel->IsOpen();
-                    if (ImGui::MenuItem(panel->GetWindowTitle(), nullptr, &open))
-                    {
-                        panel->SetOpen(open);
-                    }
-                }
-                ImGui::EndMenu();
-            }
-
-            ImGui::EndMenuBar();
-        }
     }
 
     Vector2 GetWindowMousePostion()
@@ -325,13 +306,13 @@ namespace EditorManager
                 document->Show();
 
                 if (document->IsFocused())
-                    FocusedDocument = document;
-
+                    SetActiveDocument(document);
             }
 
             ImGui::ShowDemoWindow();
 
-            ShowMenu();
+            EditorMenuManager::Show(FocusedDocument);
+          //  ShowMenu();
 
         }
         ImGui::End();

@@ -20,5 +20,7 @@ protected:
     virtual const char* GetWindowUIDSuffix();
     std::string WindowId;
 
+    std::string WindowTitle = "Default";
+
     char NameBuffer[64] = { 0 };
 };

@@ -16,7 +16,7 @@ void View3dDocument::OnCreate()
 
 void View3dDocument::OnUpdate()
 {
-    Camera.UseMouseX = Camera.UseMouseY = Camera.UseKeyboard = IsMouseButtonDown(MOUSE_RIGHT_BUTTON);
+    Camera.UseMouseX = Camera.UseMouseY = Camera.UseKeyboard = IsMouseDownIn(MOUSE_RIGHT_BUTTON);
     Camera.Update();
 }
 

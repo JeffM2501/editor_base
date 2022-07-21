@@ -9,6 +9,8 @@ class View3dDocument : public ContentDocument
 public:
     DECLARE_DOCUMENT(View3dDocument, ContentDocument)
 
+    inline rlFPCamera& GetCamera() { return Camera; }
+
 protected:
 
     void OnCreate() override;

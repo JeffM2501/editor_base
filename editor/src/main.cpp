@@ -8,6 +8,7 @@ Editor Base System
 #include "editor/conent_document.h"
 #include "editor/documents/view_2d_document.h"
 #include "editor/documents/view_3d_document.h"
+#include "editor/panels/test_panel.h"
 
 int main ()
 {
@@ -20,7 +21,7 @@ int main ()
 
 	EditorManager::AddDocument(new View3dDocument());
 	EditorManager::AddDocument(new View2dDocument());
-	EditorManager::AddPanel<EditorPanel>();
+	EditorManager::AddPanel<TestPanel>();
 
 	// main loop
 	while (!EditorManager::WantQuit())

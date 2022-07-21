@@ -3,6 +3,7 @@
 #include "editor/conent_render.h"
 #include "editor/editor_panel.h"
 #include "editor/editor_window.h"
+#include "editor/editor_menu_manager.h"
 
 #include "imgui.h"
 
@@ -79,7 +80,9 @@ public:
 
     inline bool IsHovered() const { return Hovered; }
 
-    inline bool IsMouseDownIn(MouseButton button) const{ return IsHovered() && IsMouseButtonDown(button); }
+    inline bool IsMouseDownIn(MouseButton button) const{ return IsFocused() && IsHovered() && IsMouseButtonDown(button); }
+
+    inline EditorMenuItem& GetMenuBar() { return DocumentMenuBar; }
 
 protected:
     virtual void OnCreate() {};
@@ -96,4 +99,6 @@ protected:
     bool Hovered = false;
 
     std::map<size_t, EditorDocumentPanelData*> PanelData;
+
+    EditorMenuItem  DocumentMenuBar;
 };

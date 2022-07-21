@@ -40,7 +40,7 @@ void EditorDocument::Show()
 
     if (draw)
     {
-        Focused = ImGui::IsWindowFocused();
+        Focused = ImGui::IsWindowFocused(ImGuiHoveredFlags_RootWindow);
         Hovered = ImGui::IsWindowHovered();
             
         OnShow();

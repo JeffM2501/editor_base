@@ -44,4 +44,14 @@ protected:
     inline virtual void OnShow() {}
 
     bool Opened = true;
+
+    inline bool IsValid() { return CurrentDocument != nullptr; }
+
+    template<class T>
+    inline bool IsValid() { return CurrentDocument != nullptr && CurrentDocument->IsA(T::TypeId()); }
+
+    EditorDocument* CurrentDocument = nullptr;
+
+    template<class T>
+    inline T* GetDocumentAs() { return IsValid<T>() ? reinterpret_cast<T*>(CurrentDocument) : nullptr; }
 };
