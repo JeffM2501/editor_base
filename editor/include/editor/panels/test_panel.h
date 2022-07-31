@@ -2,7 +2,6 @@
 
 #include "editor/editor_panel.h"
 
-
 class TestPanel : public EditorPanel
 {
 public:

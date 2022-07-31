@@ -3,6 +3,7 @@
 #include "editor/panels/test_panel.h"
 #include "editor/documents/view_2d_document.h"
 #include "editor/documents/view_3d_document.h"
+#include "editor/editor_dialog.h"
 
 void TestPanel::OnShow()
 {
@@ -29,5 +30,10 @@ void TestPanel::OnShow()
 
         ImGui::TextUnformatted("View 3d");
         ImGui::SliderScalarN("Target", ImGuiDataType_Float, &(doc3d->GetCamera().GetCamera().target.x), 3, min, max, "%f", 1);
+    }
+
+    if (ImGui::Button("dialog"))
+    {
+        EditorDialog::Show<EditorDialog>();
     }
 }

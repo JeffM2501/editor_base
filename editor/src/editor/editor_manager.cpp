@@ -1,12 +1,14 @@
-#include "editor/editor_manager.h"
 #include "editor/conent_render.h"
-#include "editor/editor_panel.h"
+#include "editor/editor_dialog.h"
 #include "editor/editor_document.h"
+#include "editor/editor_manager.h"
+#include "editor/editor_panel.h"
 #include "editor/editor_window.h"
 
 #include "rlImGui.h"
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "ImGuizmo.h"
 
 const char* EditorWindow::GetWindowId()
 {
@@ -43,6 +45,8 @@ namespace EditorManager
 
     std::vector<EditorDocument*> Documents;
     std::vector<EditorPanel*> Panels;
+    std::vector<EditorDialog*> DialogBoxes;
+    EditorDialog* ActiveDialog = nullptr;
 
     EditorDocument* FocusedDocument = nullptr;
 
@@ -159,6 +163,13 @@ namespace EditorManager
 
     void Update()
     {
+        for (auto dialog : DialogBoxes)
+        {
+            ActiveDialog = dialog;
+            ActiveDialog->Update();
+            ActiveDialog = nullptr;
+        }
+
         for (auto panel : Panels)
         {
             panel->Update(FocusedDocument);
@@ -212,6 +223,17 @@ namespace EditorManager
         panel->Create();
     }
 
+    void AddDialogBox(EditorDialog* dialogBox)
+    {
+        if (dialogBox == nullptr)
+            return;
+
+        if (ActiveDialog != nullptr)
+            ActiveDialog->Child = dialogBox;
+        else
+            DialogBoxes.push_back(dialogBox);
+    }
+
     EditorDocument* GetActiveDocument()
     {
         return FocusedDocument;
@@ -250,9 +272,61 @@ namespace EditorManager
         return pos;
     }
 
+    void ShowDialog(EditorDialog* dialog)
+    {
+        EditorDialog* lastActive = ActiveDialog;
+        ActiveDialog = dialog;
+
+        if (!ActiveDialog->IsCreated)
+            ActiveDialog->Create();
+
+        bool isOpen = true;
+        bool* openPtr = nullptr;
+        if (dialog->GetAllowCloseBox())
+            openPtr = &isOpen;
+
+        ImGuiWindowFlags flags = ImGuiWindowFlags_NoSavedSettings;
+        if (!dialog->GetResizeable())
+            flags |= ImGuiWindowFlags_NoResize;
+
+        ImVec2 max = { float(GetScreenWidth()), float(GetScreenHeight()) };
+        ImGui::SetNextWindowSizeConstraints(dialog->GetMinimumSize(), max);
+
+        if (ImGui::BeginPopupModal(dialog->ImguiId.c_str(), openPtr, flags))
+        {
+            dialog->ShowContent();
+
+            if (dialog->Child != nullptr)
+            {
+                ShowDialog(dialog->Child);
+            }
+            else
+            {
+                if (openPtr != nullptr && !openPtr)
+                    dialog->SetDialogResults(EditorDialogResults::Cancel);
+
+                if (dialog->IsActive())
+                {
+                    ImGui::CloseCurrentPopup();
+            
+                    if (lastActive != nullptr)
+                        lastActive->Child = nullptr;
+                    else
+                        DialogBoxes.erase(DialogBoxes.begin());
+             
+                    delete(dialog);
+                }
+            }
+            ImGui::EndPopup();
+        }
+        ActiveDialog = lastActive;
+    }
+
     void Render()
     {
         rlImGuiBegin();
+        ImGuizmo::BeginFrame();
+
         MenuBarOffset = ImGui::GetTextLineHeightWithSpacing() + ImGui::GetStyle().FramePadding.y;
 
         ImVec2 screenSize((float)GetScreenWidth(), (float)GetScreenHeight());
@@ -309,11 +383,12 @@ namespace EditorManager
                     SetActiveDocument(document);
             }
 
-            ImGui::ShowDemoWindow();
-
             EditorMenuManager::Show(FocusedDocument);
-          //  ShowMenu();
 
+            if (!DialogBoxes.empty())
+            {
+                ShowDialog(DialogBoxes.front());
+            }
         }
         ImGui::End();
 

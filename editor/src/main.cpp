@@ -20,7 +20,7 @@ int main ()
 	EditorManager::Setup();
 
 	EditorManager::AddDocument(new View3dDocument());
-	EditorManager::AddDocument(new View2dDocument());
+	//EditorManager::AddDocument(new View2dDocument());
 	EditorManager::AddPanel<TestPanel>();
 
 	// main loop

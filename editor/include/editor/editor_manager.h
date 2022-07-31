@@ -13,6 +13,7 @@
 class EditorPanel;
 class EditorDocument;
 class EditorWindow;
+class EditorDialog;
 
 enum class DockingNodes
 {
@@ -37,6 +38,22 @@ namespace EditorManager
 
     void AddDocument(EditorDocument* document);
 
+    template <class T>
+    inline T* AddDocument()
+    {
+        T* document = new T();
+        AddDocument(document);
+        return document;
+    }
+
+    template <class T, typename ...Args>
+    inline T* AddDocument(Args&&... args)
+    {
+        T* document = new T(std::forward<Args>(args)...);
+        AddDocument(document);
+        return document;
+    }
+
     EditorDocument* GetActiveDocument();
     void SetActiveDocument(EditorDocument* document);
 
@@ -48,6 +65,32 @@ namespace EditorManager
         T* panel = new T();
         AddPanel(panel);
         return panel;
+    }
+
+    template <class T, typename ...Args>
+    inline T* AddPanel(Args&&... args)
+    {
+        T* panel = new T(std::forward<Args>(args)...);
+        AddPanel(panel);
+        return panel;
+    }
+
+    void AddDialogBox(EditorDialog* dialogBox);
+
+    template <class T>
+    inline T* AddDialogBox()
+    {
+        T* dialog = new T();
+        AddDialogBox(dialog);
+        return dialog;
+    }
+
+    template <class T, typename ...Args>
+    inline T* AddDialogBox(Args&&... args)
+    {
+        T* dialog = new T(std::forward<Args>(args)...);
+        AddDialogBox(dialog);
+        return dialog;
     }
 
     ImGuiID GetDockspaceId(DockingNodes node);
@@ -62,4 +105,6 @@ namespace EditorManager
     using DocumentCallback = std::function<void(EditorDocument*)>;
 
     extern EventHandler<DocumentCallback> OnDocumentChanged;
+
+
 }
