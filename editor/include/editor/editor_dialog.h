@@ -15,7 +15,6 @@ enum class EditorDialogResults
 class EditorDialog
 {
 public:
-
     template <class T>
     static inline T* Show()
     {
@@ -57,10 +56,22 @@ public:
 
     bool IsCreated = false;
 
+    std::function<void(EditorDialogResults result, EditorDialog* dialog)> ResultsCallback = nullptr;
+    std::function<void(EditorDialog* dialog)> ShowCallback = nullptr;
+
 protected:
     virtual void OnCreate();
-    inline virtual void OnResults(EditorDialogResults results) {}
-    inline virtual void OnShowContent() {}
+    inline virtual void OnResults(EditorDialogResults results)
+    {
+        if (ResultsCallback != nullptr)
+            ResultsCallback(results, this);
+    }
+    inline virtual void OnShowContent()
+    {
+        if (ShowCallback != nullptr)
+            ShowCallback(this);
+    }
+
     inline virtual void OnUpdate() {}
 
     inline bool IsTopMost() const { return Child == nullptr; }

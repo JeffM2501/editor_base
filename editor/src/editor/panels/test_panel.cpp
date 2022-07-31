@@ -3,7 +3,7 @@
 #include "editor/panels/test_panel.h"
 #include "editor/documents/view_2d_document.h"
 #include "editor/documents/view_3d_document.h"
-#include "editor/editor_dialog.h"
+#include "editor/dialogs/message_dialog.h"
 
 void TestPanel::OnShow()
 {
@@ -34,6 +34,10 @@ void TestPanel::OnShow()
 
     if (ImGui::Button("dialog"))
     {
-        EditorDialog::Show<EditorDialog>();
+        MessageDialog::Show("Test", "I am a message box!!!!!!\nbox\nbox!")->ResultsCallback = [](EditorDialogResults results, EditorDialog*)
+        {
+            if (results == EditorDialogResults::Accept)
+                MessageDialog::Show("Accept", "accept pressed");
+        };
     }
 }

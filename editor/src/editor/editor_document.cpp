@@ -59,14 +59,12 @@ void EditorDocument::Update()
 
 void EditorDocument::Close()
 {
-
 }
 
 bool EditorDocument::WantClose()
 {
     return Closing;
 }
-
 
 bool EditorDocument::IsFocused() const
 {

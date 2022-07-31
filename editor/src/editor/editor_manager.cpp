@@ -392,7 +392,6 @@ namespace EditorManager
         }
         ImGui::End();
 
-
         rlImGuiEnd();
     }
 

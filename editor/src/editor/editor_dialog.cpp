@@ -18,17 +18,20 @@ void EditorDialog::Create()
 
 void EditorDialog::OnCreate()
 {
-    SetAcceptDeclineCancel();
+    SetAccept();
 }
 
 void EditorDialog::SetAccept(const char* acceptStr)
 {
     AcceptButton = acceptStr;
+    DeclineButton.clear();
+    CancelButton.clear();
 }
 
 void EditorDialog::SetAcceptCancel(const char* acceptStr, const char* cancelStr)
 {
     AcceptButton = acceptStr;
+    DeclineButton.clear();
     CancelButton = cancelStr;
 }
 
