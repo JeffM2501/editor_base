@@ -13,8 +13,9 @@ public:
 
     inline rlFPCamera& GetCamera() { return Camera; }
 
-protected:
+    Ray GetMouseRay();
 
+protected:
     void OnCreate() override;
     void OnShow() override;
     void OnUpdate() override;
@@ -26,7 +27,6 @@ protected:
     void ShowOverlay() override;
 
     bool Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mode, Matrix& matrix, Matrix* deltaMatrix = nullptr, const Vector3* snap = nullptr);
-
 
 protected:
     rlFPCamera Camera;

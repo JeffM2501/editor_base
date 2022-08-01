@@ -27,6 +27,10 @@ void FloatToMatrix(float16 floats, Matrix& mat)
     mat.m15 = floats.v[15];
 }
 
+Ray View3dDocument::GetMouseRay()
+{
+    return Camera.GetMouseRay(GetLocalMousePosition());
+}
 
 void View3dDocument::OnCreate()
 {
@@ -106,6 +110,18 @@ void View3dDocument::RenderScene()
     DrawGrid(50, 1);
     rlDrawRenderBatchActive();
     rlEnableDepthTest();
+
+    Vector3 spherePos = { 10,2,10 };
+    float sphereRad = 1;
+
+    auto collide = GetRayCollisionSphere(GetMouseRay(), spherePos, sphereRad);
+
+    DrawSphere(spherePos, sphereRad, collide.hit ? GREEN : BLUE);
+
+    if (collide.hit)
+        DrawSphere(collide.point, 0.125f,PURPLE);
+
+    //CheckCollisionSpheres()
 
     rlPushMatrix();
     rlMultMatrixf(MatrixToFloat(ObjectMatrix));
