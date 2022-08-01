@@ -180,7 +180,7 @@ void rlFPCamera::Update()
     }
 
     // Mouse movement detection
-    Vector2 mousePositionDelta = GetMouseDelta();
+    Vector2 mousePositionDelta = Vector2Multiply(GetMouseDelta(),MouseScale);
     float mouseWheelMove = GetMouseWheelMove();
 
     // Keys input detection

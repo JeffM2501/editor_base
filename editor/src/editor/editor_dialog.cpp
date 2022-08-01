@@ -8,8 +8,11 @@ void EditorDialog::Create()
     IsCreated = true;
     OnCreate();
 
+    if (CreateCallback != nullptr)
+        CreateCallback(this);
+
     static char temp[256] = { 0 };
-    sprintf(temp, "%s###%s-dlog-%d", GetName(), GetName(), GetRandomValue(0, 0xffffffff));
+    sprintf(temp, "%s###%s-dlog-%d", GetName(), GetName(), GetRandomValue(0, 0xffffff));
 
     ImguiId = temp;
 

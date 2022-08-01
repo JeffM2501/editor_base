@@ -19,8 +19,8 @@ public:
     // TODO shortcuts
 protected:
     inline virtual void OnExecute() {}
-    inline bool OnEnabled() { return true; }
-    inline bool OnChecked() { return false; }
+    inline virtual bool OnEnabled() { return true; }
+    inline virtual bool OnChecked() { return false; }
 };
 
 class EditorMenuItem : public EditorCommand
@@ -38,15 +38,30 @@ public:
 
     Ptr AddMenu(Ptr item);
 
-    inline Ptr AddMenu(int order, const char* name)
+    inline Ptr AddMenu(int order, const char* name, const char* icon = nullptr, std::function<void(EditorCommand*)> callback = nullptr)
     {
-        return AddMenu(std::make_shared<EditorMenuItem>(order, name));
+        return AddMenu(std::make_shared<EditorMenuItem>(order, name, icon, callback));
     }
 
     template<class T>
     inline Ptr AddMenu(int order, const char* name)
     {
         return AddMenu(std::make_shared<T>(order, name));
+    }
+
+    template<class T, typename ...Args>
+    inline Ptr AddMenu(Args&&... args)
+    {
+        return AddMenu(std::make_shared<T>(std::forward<Args>(args)...));
+    }
+
+    inline Ptr FindMenu(int id)
+    {
+        auto child = Children.find(id);
+        if (child == Children.end())
+            return nullptr;
+
+        return child->second;
     }
 
     EditorMenuItem() {}
@@ -58,8 +73,13 @@ namespace EditorMenuManager
     void Setup();
     void Show(EditorDocument* currentDocument);
 
+    EditorMenuItem& GetAppMenu();
+
+    void RebuildMenuCache();
+
     // main menu constants
     static constexpr int FileMenu = 0;
     static constexpr int EditMenu = 10;
     static constexpr int WindowMenu = 100;
+    static constexpr int HelpMenu = 1000;
 }

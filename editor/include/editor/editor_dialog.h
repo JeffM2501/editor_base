@@ -59,6 +59,8 @@ public:
     std::function<void(EditorDialogResults result, EditorDialog* dialog)> ResultsCallback = nullptr;
     std::function<void(EditorDialog* dialog)> ShowCallback = nullptr;
 
+    std::function<void(EditorDialog* dialog)> CreateCallback = nullptr;
+
 protected:
     virtual void OnCreate();
     inline virtual void OnResults(EditorDialogResults results)
@@ -86,7 +88,7 @@ protected:
     std::string DeclineButton;
     std::string CancelButton;
 
-    ImVec2 MinimumSize = { 200,150 };
+    ImVec2 MinimumSize = { 200,100 };
     bool Resizeable = false;
     bool AllowCloseBox = true;
 };

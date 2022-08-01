@@ -40,6 +40,7 @@ protected:
     inline void OnShowContent() override 
     {
         ImGui::TextUnformatted(MessageText.c_str());
+        EditorDialog::OnShowContent();
     }
 
     std::string MessageText;

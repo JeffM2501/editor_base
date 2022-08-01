@@ -2,6 +2,7 @@
 #include "editor/editor_dialog.h"
 #include "editor/editor_document.h"
 #include "editor/editor_manager.h"
+#include "editor/editor_menu_manager.h"
 #include "editor/editor_panel.h"
 #include "editor/editor_window.h"
 
@@ -9,6 +10,35 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "ImGuizmo.h"
+
+class PanelCommand : public EditorMenuItem
+{
+public:
+    PanelCommand(int index, EditorPanel* _panel) :  Panel(_panel)
+    {
+        Order = index;
+        if (Panel)
+        {
+            Label = Panel->GetWindowTitle();
+        }
+    }
+
+    EditorPanel* Panel = nullptr;
+
+protected:
+    void OnExecute() override 
+    {
+        if (Panel == nullptr)
+            return;
+
+        Panel->SetOpen(!Panel->IsOpen());
+    }
+
+    bool OnChecked() override
+    { 
+        return Panel != nullptr && Panel->IsOpen(); 
+    }
+};
 
 const char* EditorWindow::GetWindowId()
 {
@@ -217,10 +247,27 @@ namespace EditorManager
         SetActiveDocument(newDocument);
     }
 
+    void UpdatePanelMenus()
+    {
+        auto windowMenu = EditorMenuManager::GetAppMenu().FindMenu(EditorMenuManager::WindowMenu);
+        if (windowMenu == nullptr)
+            return;
+
+        windowMenu->Children.clear();
+
+        int i = 0;
+        for (auto panel : Panels)
+        {
+            windowMenu->AddMenu<PanelCommand>(i, panel);
+        }
+        EditorMenuManager::RebuildMenuCache();
+    }
+
     void AddPanel(EditorPanel* panel)
     {
         Panels.push_back(panel);
         panel->Create();
+        UpdatePanelMenus();
     }
 
     void AddDialogBox(EditorDialog* dialogBox)

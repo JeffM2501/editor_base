@@ -1,7 +1,7 @@
 #include "editor/editor_menu_manager.h"
 #include "editor/editor_document.h"
 #include "editor/editor_manager.h"
-
+#include "editor/dialogs/message_dialog.h"
 
 class EditorMenuInstance
 {
@@ -71,16 +71,31 @@ namespace EditorMenuManager
             MenuCache.Fill(&document->GetMenuBar());
     }
 
+    void RebuildMenuCache()
+    {
+        UpdateMenuCache(EditorManager::GetActiveDocument());
+    }
+
     void Setup()
     {
         EditorManager::OnDocumentChanged.Add(UpdateMenuCache);
 
-        auto fileMenu = AppMenu.AddMenu(std::make_shared<EditorMenuItem>(0, "File"));
+        auto fileMenu = AppMenu.AddMenu(FileMenu, "File");
 
         auto quit = fileMenu->AddMenu(std::make_shared<EditorMenuItem>(9999, "Exit", nullptr, [](EditorCommand*)
             {
                 EditorManager::Quit();
-            }));
+            })); 
+
+
+        AppMenu.AddMenu(WindowMenu, "Window");
+        
+        auto help = AppMenu.AddMenu(HelpMenu, "Help");
+
+        help->AddMenu(9999, "About", nullptr, [](EditorCommand*)
+            {
+                MessageDialog::Show("About", "Editor Base");
+            });
     }
 
     void Show(EditorDocument* currentDocument)
@@ -91,6 +106,11 @@ namespace EditorMenuManager
                 child.second->Show();
             ImGui::EndMenuBar();
         }
+    }
+
+    EditorMenuItem& GetAppMenu()
+    {
+        return AppMenu;
     }
 }
 

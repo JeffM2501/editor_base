@@ -34,7 +34,7 @@ void TestPanel::OnShow()
 
     if (ImGui::Button("dialog"))
     {
-        MessageDialog::Show("Test", "I am a message box!!!!!!\nbox\nbox!")->ResultsCallback = [](EditorDialogResults results, EditorDialog*)
+        MessageDialog::Show("Test", "I am a message box!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nbox\nbox!")->ResultsCallback = [](EditorDialogResults results, EditorDialog*)
         {
             if (results == EditorDialogResults::Accept)
                 MessageDialog::Show("Accept", "accept pressed");

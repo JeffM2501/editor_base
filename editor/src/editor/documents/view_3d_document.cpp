@@ -32,12 +32,14 @@ void View3dDocument::OnCreate()
 {
     Camera.Setup(45, Vector3{ 0,0,0 });
 
+    Camera.MouseScale = { -1,-1 };
+
     Camera.ControlsKeys[rlFPCamera::CameraControls::MOVE_UP] = KEY_E;
     Camera.ControlsKeys[rlFPCamera::CameraControls::MOVE_DOWN] = KEY_Q;
 
     ClearColor = SKYBLUE;
 
-    ObjectMatrix = /*MatrixTranspose*/(MatrixIdentity());
+    ObjectMatrix = MatrixIdentity();
 }
 
 void View3dDocument::OnShow()
@@ -90,8 +92,8 @@ void View3dDocument::OnUpdate()
 void View3dDocument::RenderContent()
 {
     Camera.BeginMode3D();
-    CameraMatrix = /*MatrixTranspose*/(rlGetMatrixModelview());
-    ProjectionMatrix = /*MatrixTranspose*/(rlGetMatrixProjection());
+    CameraMatrix = rlGetMatrixModelview();
+    ProjectionMatrix = rlGetMatrixProjection();
 
     RenderScene();
     Camera.EndMode3D();

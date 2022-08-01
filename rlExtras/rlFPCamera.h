@@ -103,6 +103,8 @@ public:
     bool UseMouseX = true;
     bool UseMouseY = true;
 
+    Vector2 MouseScale = { 1,1 };
+
     bool UseKeyboard = true;
 
     bool UseController = true;

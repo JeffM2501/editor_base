@@ -1,4 +1,3 @@
 ##TODO
-- Dialogs
-- Panel Window
+- Panel Menu
 - Picking Utils
