@@ -430,6 +430,7 @@ namespace EditorManager
                     SetActiveDocument(document);
             }
 
+            ImGui::ShowDemoWindow();
             EditorMenuManager::Show(FocusedDocument);
 
             if (!DialogBoxes.empty())

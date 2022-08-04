@@ -4,7 +4,6 @@
 
 #include "imgui.h"
 #include "raylib.h"
-//#include "editor/event_callbacks.h"
 
 #include <vector>
 #include <memory>
@@ -105,6 +104,4 @@ namespace EditorManager
     using DocumentCallback = std::function<void(EditorDocument*)>;
 
     extern EventHandler<DocumentCallback> OnDocumentChanged;
-
-
 }
