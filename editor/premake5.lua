@@ -6,9 +6,8 @@ project (workspaceName)
     location "../_build"
     targetdir "../_bin/%{cfg.buildcfg}"
 	
-    filter "configurations:Release"
-		kind "WindowedApp"
-		entrypoint "mainCRTStartup"
+    kind "WindowedApp"
+	entrypoint "mainCRTStartup"
 
 	filter "action:vs*"
         debugdir "$(SolutionDir)"
@@ -27,7 +26,7 @@ project (workspaceName)
 
     includedirs { "./", "src", "include"}
 	link_raylib();
-  link_to("rlImGui")
-  link_to("rlExtras")
+	link_to("rlImGui")
+	link_to("rlExtras")
 	
 	-- To link to a lib use link_to("LIB_FOLDER_NAME")

@@ -9,6 +9,7 @@ Editor Base System
 #include "editor/documents/view_2d_document.h"
 #include "editor/documents/view_3d_document.h"
 #include "editor/panels/test_panel.h"
+#include "editor/panels/log_panel.h"
 
 #ifdef _WIN32
 #ifdef __cplusplus
@@ -25,6 +26,9 @@ extern "C" {
 
 int main ()
 {
+    EditorManager::AddPanel<TestPanel>();
+    EditorManager::AddPanel<LogPanel>();
+
 	// set up the window
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 	InitWindow(1280, 800, "Editor");
@@ -34,7 +38,7 @@ int main ()
 
 	EditorManager::AddDocument(new View3dDocument());
 	EditorManager::AddDocument(new View2dDocument());
-	EditorManager::AddPanel<TestPanel>();
+
 
 	// main loop
 	while (!EditorManager::WantQuit())
