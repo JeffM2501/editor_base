@@ -1,5 +1,7 @@
 #include "editor/utils/math_3d.h"
 
+#include "rlgl.h"
+
 #include <math.h>
 #include <limits>
 
@@ -8,7 +10,7 @@ void Matrix4x4::RotationAxis(const Vector4& axis, float angle)
     float length2 = Vector4LengthSq(axis);
     if (length2 < std::numeric_limits<float>::epsilon())
     {
-        Mat = MatrixIdentity();
+        FromMatrix(MatrixIdentity());
         return;
     }
 
@@ -47,6 +49,25 @@ void Matrix4x4::RotationAxis(const Vector4& axis, float angle)
     M[3][3] = 1.f;
 }
 
+void Matrix4x4::MultMatrix()
+{
+    rlMultMatrixf(M16);
+}
+constexpr bool useMatrix = true;
+
+void Transform3D::Apply()
+{
+    if (useMatrix)
+    {
+        Math3D::TransformToMatrix(*this).MultMatrix();
+        return;
+    }
+
+    rlScalef(Scale.x, Scale.y, Scale.z);
+    rlTranslatef(Position.x, Position.y, Position.z);
+    rlMultMatrixf(MatrixToFloat(QuaternionToMatrix(Orientation)));
+}
+
 namespace Math3D
 {
     Vector3 GetBoundingBoxCenter(const BoundingBox& box)
@@ -81,7 +102,7 @@ namespace Math3D
             rot[i].RotationAxis(directionUnary[i], (&rots.x)[i]);
         }
 
-        mat.Mat = MatrixMultiply(MatrixMultiply(rot[0].Mat, rot[1].Mat), rot[2].Mat);
+        mat.FromMatrix(MatrixMultiply(MatrixMultiply(rot[0].ToMatrix(), rot[1].ToMatrix()), rot[2].ToMatrix()));
 
         float validScale[3];
         for (int i = 0; i < 3; i++)

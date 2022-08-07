@@ -28,8 +28,7 @@ protected:
 
     void ShowOverlay() override;
 
-    bool Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mode, Matrix& matrix, Matrix* deltaMatrix = nullptr, const Vector3* snap = nullptr);
-    bool Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mode, Transform3D& transform, Matrix* deltaMatrix = nullptr, const Vector3* snap = nullptr);
+    bool Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mode, Transform3D& transform, Matrix4x4* deltaMatrix = nullptr, const Vector3* snap = nullptr);
 
 protected:
     rlFPCamera Camera;
