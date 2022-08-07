@@ -1,6 +1,8 @@
 #pragma once
 
 #include "editor/conent_document.h"
+#include "editor/utils/math_3d.h"
+
 #include "raylib.h"
 #include "raymath.h"
 #include "rlFPCamera.h"
@@ -27,10 +29,12 @@ protected:
     void ShowOverlay() override;
 
     bool Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mode, Matrix& matrix, Matrix* deltaMatrix = nullptr, const Vector3* snap = nullptr);
+    bool Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mode, Transform3D& transform, Matrix* deltaMatrix = nullptr, const Vector3* snap = nullptr);
 
 protected:
     rlFPCamera Camera;
 
+    Transform3D ObjectTransform;
     Matrix ObjectMatrix;
     
     Matrix ProjectionMatrix;

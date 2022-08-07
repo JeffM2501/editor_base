@@ -78,7 +78,7 @@ namespace Math3D
         Matrix4x4 rot[3];
         for (int i = 0; i < 3; i++)
         {
-            rot[i].RotationAxis(directionUnary[i], (&rots.x)[i] * DEG2RAD);
+            rot[i].RotationAxis(directionUnary[i], (&rots.x)[i]);
         }
 
         mat.Mat = MatrixMultiply(MatrixMultiply(rot[0].Mat, rot[1].Mat), rot[2].Mat);

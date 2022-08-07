@@ -200,7 +200,7 @@ void View3dDocument::ShowOverlay()
     if (IsKeyDown(KEY_LEFT_SHIFT))
         op = ImGuizmo::OPERATION::SCALE;
 
-    Manipulate(op, ImGuizmo::MODE::LOCAL, ObjectMatrix);
+    Manipulate(op, ImGuizmo::MODE::LOCAL, ObjectTransform);
 }
 
 bool View3dDocument::Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mode, Matrix& matrix, Matrix* deltaMatrix /*= nullptr*/, const Vector3* snap /*= nullptr*/)
@@ -213,6 +213,25 @@ bool View3dDocument::Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mo
     if (ImGuizmo::Manipulate(MatrixToFloat(CameraMatrix), MatrixToFloat(ProjectionMatrix), operation, mode, manipMatrix.v, deltaManipMatrix.v, (float*)snap))
     {
         FloatToMatrix(manipMatrix, ObjectMatrix);
+        if (deltaMatrix != nullptr)
+            FloatToMatrix(deltaManipMatrix, *deltaMatrix);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool View3dDocument::Manipulate(ImGuizmo::OPERATION operation, ImGuizmo::MODE mode, Transform3D& transform, Matrix* deltaMatrix, const Vector3* snap)
+{
+    Matrix4x4 manipMatrix = Math3D::TransformToMatrix(transform);
+    float16 deltaManipMatrix;
+    if (deltaMatrix != nullptr)
+        deltaManipMatrix = MatrixToFloatV(*deltaMatrix);
+
+    if (ImGuizmo::Manipulate(MatrixToFloat(CameraMatrix), MatrixToFloat(ProjectionMatrix), operation, mode, manipMatrix.M16, deltaManipMatrix.v, (float*)snap))
+    {
+        transform = Math3D::MatrixToTransform(manipMatrix);
         if (deltaMatrix != nullptr)
             FloatToMatrix(deltaManipMatrix, *deltaMatrix);
 
@@ -261,10 +280,10 @@ void View3dDocument::RenderScene()
     bbox.min = { -0.5f,-0.5f,-0.5f };
     bbox.max = { 0.5f,0.5f,0.5f };
 
-    auto hit = TestRayBBoxIntersection(GetMouseRay(), bbox, ObjectMatrix);
+    auto hit = Math3D::GetRayCollisionBoxOriented(GetMouseRay(), bbox, ObjectTransform);
 
     rlPushMatrix();
-    rlMultMatrixf(MatrixToFloat(ObjectMatrix));
+    rlMultMatrixf(Math3D::TransformToMatrix(ObjectTransform).M16);
     DrawCube(Vector3{ 0,0,0 }, 1, 1, 1, ColorAlpha(hit.hit ? RED : YELLOW, 1.0f));
     rlPopMatrix();
 
