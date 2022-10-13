@@ -84,6 +84,8 @@ namespace EditorManager
 
     float MenuBarOffset = 0;
 
+    float ToolbarSize = 0;
+
     void Setup()
     {
         rlImGuiSetup(true);
@@ -319,6 +321,42 @@ namespace EditorManager
         return pos;
     }
 
+    void SetImGuiPixelSpace()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    }
+
+    void ClearImGuiPixelSpace()
+    {
+        ImGui::PopStyleVar(3);
+    }
+
+    void ShowToolbar(ImVec2 screenSize)
+    {
+        ImVec2 pad = ImGui::GetStyle().WindowPadding;
+
+        SetImGuiPixelSpace();
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
+
+        ImGui::BeginChild("Toolbar", ImVec2(screenSize.x, ToolbarSize), true, ImGuiWindowFlags_NoResize);
+        ClearImGuiPixelSpace();
+
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + pad.x);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + pad.y);
+
+
+        ImGui::Button(ICON_FA_SQUARE_ENVELOPE);
+
+        SetImGuiPixelSpace();
+        ImGui::EndChild();
+
+        ClearImGuiPixelSpace();
+
+        ImGui::PopStyleColor();
+    }
+
     void ShowDialog(EditorDialog* dialog)
     {
         EditorDialog* lastActive = ActiveDialog;
@@ -368,6 +406,8 @@ namespace EditorManager
         }
         ActiveDialog = lastActive;
     }
+    
+    bool showToolbar = false;
 
     void Render()
     {
@@ -375,6 +415,11 @@ namespace EditorManager
         ImGuizmo::BeginFrame();
 
         MenuBarOffset = ImGui::GetTextLineHeightWithSpacing() + ImGui::GetStyle().FramePadding.y;
+        if (showToolbar)
+        {
+            ToolbarSize = ImGui::GetTextLineHeightWithSpacing() + (ImGui::GetStyle().WindowPadding.y * 2);
+            MenuBarOffset += ToolbarSize;
+        }
 
         ImVec2 screenSize((float)GetScreenWidth(), (float)GetScreenHeight());
 
@@ -399,7 +444,8 @@ namespace EditorManager
 
         if (showMainFrame)
         {
-            screenSize.y -= MenuBarOffset;
+            if (showToolbar)
+                ShowToolbar(screenSize);
 
             DockspaceId = ImGui::DockSpace(ImGui::GetID("MainWindowDock"), screenSize, ImGuiDockNodeFlags_PassthruCentralNode);
 
